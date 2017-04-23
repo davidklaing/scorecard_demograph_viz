@@ -1,0 +1,54 @@
+---
+title: "Preprocessing"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(stringr)
+library(magrittr)
+```
+
+```{r preprocessing, message = FALSE}
+# Read in the scorecard data.
+micro <- read_csv("../data/scorecard_micro.csv")
+
+# Read in a CSV with the statenames.
+statenames <- read_csv("../data/states.csv")
+
+# Rename the abbreviation column in statenames so that it matches micro.
+statenames %<>% mutate(STABBR = Abbreviation)
+
+# Join micro with statenames.
+micro <- left_join(micro, statenames, "STABBR")
+
+# Remove the obscure non-state postal codes.
+micro %<>% filter(!is.na(State))
+
+# Arrange by state and school name.
+micro %<>% arrange(STABBR, INSTNM)
+
+# Change the variable names so that they're more descriptive.
+micro %<>% mutate(`Institution name` = INSTNM,
+                  City = CITY,
+                  `Share of students over 23 at entry` = agege24,
+                  `Share of female students` = female,
+                  `Share of married students` = married,
+                  `Share of dependent students` = dependent,
+                  `Share of veteran students` = veteran,
+                  `Share of first generation students` = first_gen,
+                  `Share of students who received a federal loan while in school` = loan_ever,
+                  `Share of students who received a Pell Grant while in school` = pell_ever)
+
+# Remove duplicate rows. (Technically, this is a bit of a hack. I should be taking the means
+# of the values where there are duplicate schools. But for now, this is tidier.)
+micro <- micro[!duplicated(micro$INSTNM),]
+
+# Write to csv.
+write_csv(micro, "scorecard_demograph_viz/scorecard_micro_preprocessed.csv")
+```
+
+```{r sessioninfo}
+sessionInfo()
+```

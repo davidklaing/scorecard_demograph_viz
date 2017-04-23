@@ -1,0 +1,10 @@
+name: scorecard_demograph_viz
+title: scorecard_demograph_viz
+account: laingdk
+server: shinyapps.io
+appId: 172893
+bundleId: 800256
+url: https://laingdk.shinyapps.io/scorecard_demograph_viz/
+when: 1492967337.00377
+asMultiple: FALSE
+asStatic: FALSE
